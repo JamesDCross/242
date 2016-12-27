@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define AL 100
+#define SL 80
+
+
+
+void print_LTA(char **wl, int n, double av) {
+    if (n > 0) {
+        if (strlen(wl[0]) > av) {
+            printf("%s\n", wl[0]);
+
+        }
+        print_LTA(wl + 1, n - 1, av);
+    }
+}
+
+
+void *emalloc(size_t s) {
+   
+    void *r = malloc(s);
+      if (NULL == r) {
+        fprintf(stderr, "Memory allocation failed!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return r;
+}
+
+
+
+
+int main(void) {
+    char w[SL];
+    char *wl[AL];
+    int nw = 0;
+    int i = 0;
+    double av = 0.0;
+    
+
+    while (nw < AL && 1 == scanf("%79s", w)) {
+       
+        wl[nw] = emalloc((strlen(w) + 1) * sizeof wl[0][0]);
+        
+        strcpy(wl[nw++], w);
+        av += strlen(w);
+    }
+
+  
+    if (nw > 0) {
+        av /=  nw;
+        fprintf(stderr, "%.2f\n", av);
+        print_LTA(wl, nw, av);
+    }
+
+
+    for (i = 0; i < nw; i++) {
+        free(wl[i]);
+    }
+    return EXIT_SUCCESS;
+}
