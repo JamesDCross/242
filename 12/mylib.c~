@@ -1,0 +1,38 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include"mylib.h"
+#include"htable.h"
+
+
+
+
+void *emalloc(size_t s){
+   void *result = malloc(s);
+   if(NULL == result){
+      fprintf(stderr,"Memory allocation failed!\n");
+      exit(EXIT_FAILURE);
+   }
+   return result;
+}
+
+void *erealloc(void *p, size_t s){
+   void *result = realloc(p,s);
+   if(NULL == result){
+      fprintf(stderr,"Memory allocation failed!\n");
+      exit(EXIT_FAILURE);
+   }
+   return result;
+}
+
+int main(void) {
+    htable h = htable_new(18143);
+    char word[256];
+    while (getword(word, sizeof word, stdin) != EOF) {
+        htable_insert(h, word);
+    }
+    htable_print(h, stdout);
+    htable_free(h);
+    return EXIT_SUCCESS;
+}
+
+

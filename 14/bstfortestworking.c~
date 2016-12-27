@@ -1,0 +1,161 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "bst.h"
+
+
+
+struct bst_node { /* should live in bst.c */
+    char *key;
+    bst left;
+    bst right;
+};
+
+void *emalloc(size_t s){
+   void *result = malloc(s);
+   if(result == NULL){
+      fprintf(stderr, "Memory allocated failed!\n");
+      exit(EXIT_SUCCESS);
+   }
+   return result;
+}
+
+/*check*/
+int bst_search(bst b, char *searchKey){
+    int output = 0;
+    if(b == NULL){
+        return 0;
+    }
+
+    if(strcmp(b->key,searchKey)==0){
+        return 1;
+    }
+
+    if(strcmp(b->key,searchKey) < 0){
+        output = bst_search(b->right, searchKey);
+    }
+
+    if(strcmp(b->key,searchKey) > 0){
+        output = bst_search(b->left, searchKey);
+    }
+    return output;
+}
+
+
+
+bst bst_new(){
+    return NULL;
+
+}
+
+void bst_inorder(bst b, void f(char *s)){
+    if(b == NULL){
+        return;
+    }
+    bst_inorder(b->left, f);
+    f(b->key);
+    bst_inorder(b->right, f);
+}
+
+void bst_preorder(bst b, void f(char *s)){
+    if(b == NULL){
+        return;
+    }
+    f(b->key);
+    bst_preorder(b->left, f);
+    bst_preorder(b->right,f);
+}
+
+bst bst_insert(bst b, char *insertKey){
+
+    if(b ==NULL){
+
+        b = emalloc(sizeof *b);
+        b->key = emalloc((strlen(insertKey)+1) * sizeof insertKey[0]);
+
+        strcpy(b->key, insertKey);
+
+        b->left = bst_new();
+        b->right = bst_new();
+
+    }
+    /*this ment that everytime it copied it was the same*/
+    /*if(strcmp(b->key,insertKey)==0){
+    printf("fail");
+	return 0;
+    }*/
+	/*the above is implied by these two if statements if its equal nothing happens*/
+	
+    if(strcmp(insertKey,b->key) < 0){
+
+	b->left = bst_insert(b->left, insertKey);
+	/*printf("insert left");*/
+    }
+
+    if(strcmp(insertKey,b->key) > 0){
+
+	b->right = bst_insert(b->right, insertKey);
+	/*printf("insert right");*/
+    }
+
+    return b;
+}
+
+
+
+bst bst_free(bst b){
+    if(b == NULL){
+        return b;
+    }
+
+    b->left = bst_free(b->left);
+    b->right = bst_free(b->right);
+    free(b->key);
+    free(b);
+    return b;
+}
+
+
+void print_key(char *key) {
+printf("%s\n", key);
+}
+
+void dosearch(bst b, char *key) {
+   if (bst_search(b, key) == 0) {
+      printf("%s -- not found\n", key);
+   } else {
+      printf("%s -- found\n", key);
+   }
+}
+
+
+
+int main()
+{
+    bst b = bst_new();
+   printf("inserting d,b,f,a,c,e,g\n");
+   b = bst_insert(b,"d");
+   b = bst_insert(b,"d");
+   b = bst_insert(b,"d");
+   b = bst_insert(b,"d");
+   b = bst_insert(b,"b");
+   b = bst_insert(b,"f");
+   b = bst_insert(b,"a");
+   b = bst_insert(b,"c");
+   b = bst_insert(b,"e");
+   b = bst_insert(b,"g");
+
+
+   printf("inorder traversal\n");
+   bst_inorder(b, print_key);
+   printf("preorder traversal\n");
+   bst_preorder(b, print_key);
+   printf("searching\n");
+   dosearch(b, "f");
+   dosearch(b, "o");
+   dosearch(b, "x");
+   dosearch(b, "e");
+   dosearch(b, "d");
+   bst_free(b);
+   return EXIT_SUCCESS;
+}

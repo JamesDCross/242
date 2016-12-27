@@ -1,0 +1,164 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "rbt.h"
+#include "mylib.h"
+
+#define IS_BLACK(x) ((NULL == (x)) || (BLACK == (x)->colour))/*in h file?*/
+#define IS_RED(x) ((NULL != (x)) && (RED == (x)->colour))
+
+typedef enum { RED, BLACK } rbt_colour;
+
+struct rbt_node {
+    char *key;
+    rbt_colour colour;
+    rbt left;
+    rbt right;
+};
+
+
+
+
+
+int rbt_search(rbt b, char *searchKey){
+    int output = 0;
+    if(b == NULL){
+        return 0;
+    }
+
+    if(strcmp(b->key,searchKey)==0){
+        return 1;
+    }
+
+    if(strcmp(b->key,searchKey) < 0){
+        output = rbt_search(b->right, searchKey);
+    }
+
+    if(strcmp(b->key,searchKey) > 0){
+        output = rbt_search(b->left, searchKey);
+    }
+    return output;
+}
+
+rbt rbt_delete(rbt b,char *deleteKey){
+    rbt successor;
+    /* rbt temp;*/
+    char *tmp;  
+    if(b == NULL){
+        return b;
+    }
+    
+    if(strcmp(deleteKey,b->key) < 0){
+        b->left = rbt_delete(b->left,deleteKey);
+    }
+    
+    if(strcmp(deleteKey,b->key) > 0){
+        b->right = rbt_delete(b->right,deleteKey);
+    }else{
+        /*Case 1: no child*/
+        if(b->left == NULL && b->right==NULL){
+            free(b->key);
+            free(b);
+            b=NULL;/*Q why null here and nowhere else?*/
+        }
+        /*Case 2: One child*/
+        else if(b->left ==NULL){
+            /* temp = b;
+               b = b->right;*/
+            free(b->key);
+            free(b);
+            return b->right;
+        }
+        else if(b->right ==NULL){
+            /* temp = b;
+               b = b->left;*/
+            free(b->key);
+            free(b);
+            return b->left;
+        }
+        /*Case 3: 2 children*/
+        else{
+            successor = b->right;
+            while(successor->left != NULL){
+                successor = successor->left;
+            }
+            tmp = b->key;
+            b->key = successor->key;
+            successor->key = tmp;
+            b->right = rbt_delete(b->right, deleteKey);/*could be in findmin but this makes it "recursive"*/
+        }
+    }
+
+    return b;
+}
+
+
+rbt rbt_new(){
+    return NULL;
+
+}
+
+void rbt_inorder(rbt b, void f(char *s)){
+    if(b == NULL){
+        return;
+    }
+    rbt_inorder(b->left, f);
+    f(b->key);
+    rbt_inorder(b->right, f);
+}
+
+void rbt_preorder(rbt b, void f(char *s)){
+    if(b == NULL){
+        return;
+    }
+    f(b->key);
+    rbt_preorder(b->left, f);
+    rbt_preorder(b->right,f);
+}
+
+rbt rbt_insert(rbt r, char *insertKey){
+
+    if(b ==NULL){
+
+        b = emalloc(sizeof *b);
+        b->key = emalloc((strlen(insertKey)+1) * sizeof insertKey[0]);
+        /*We initialise the colour field of our struct*/
+        b->colour = RED;
+        strcpy(b->key, insertKey);
+
+        b->left = rbt_new();
+        b->right = rbt_new();
+
+    }
+  
+	
+    if(strcmp(insertKey,b->key) < 0){
+
+	b->left = rbt_insert(b->left, insertKey);
+	
+    }
+
+    if(strcmp(insertKey,b->key) > 0){
+
+	b->right = rbt_insert(b->right, insertKey);
+	/*printf("insert right");*/
+    }
+    
+    return b;
+}
+
+
+
+rbt rbt_free(rbt b){
+    if(b == NULL){
+        return b;
+    }
+
+    b->left = rbt_free(b->left);
+    b->right = rbt_free(b->right);
+    free(b->key);
+    free(b);
+    return b;
+}
+
+

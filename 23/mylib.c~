@@ -1,0 +1,18 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include "mylib.h"
+#include <assert.h>
+#include <ctype.h>
+
+void* emalloc (size_t s){
+   void* result = malloc(s);
+   if (result==NULL){
+      fprintf(stderr,"Memory Allocation Failed\n");
+      exit(EXIT_FAILURE);
+   }
+   return result;
+}
+
+
+
+

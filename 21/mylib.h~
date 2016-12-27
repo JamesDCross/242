@@ -1,0 +1,12 @@
+#ifndef MYLIB_H
+#define MYLIB_H
+
+
+
+typedef enum hash_e{DOUBLE_H, LINEAR_P} hash_t;
+
+
+extern void* emalloc (size_t);
+
+
+#endif

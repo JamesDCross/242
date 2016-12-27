@@ -1,0 +1,11 @@
+cat p.c - prints the c file out in the terminal
+
+gcc *.c - compiles all c files in a folder
+
+note you cannot compile them seperately, you have to compile all the c files.
+
+you dont actually need to make the o files and join things together into one like in the second test
+
+echo *.c - finds all c files in the folder
+
+gcc htable.c mylib.c p.c -o test note: he has compiled all c and outputted to the same file
